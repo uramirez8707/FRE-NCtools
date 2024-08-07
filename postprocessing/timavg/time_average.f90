@@ -600,14 +600,16 @@ namelist /input/   file_names, file_name_out, use_end_time, verbose, &
         if (itime > 0) then
             istat =  NF90_GET_VAR (ncid_in, varid_recdim, time, start=(/itime/))
             if (istat /= NF90_NOERR) call error_handler ('getting time coord value', ncode=istat)
+        endif
 
+        if (do_avg) then
             !--- read time bnds_info
             istat = NF90_GET_VAR (ncid_in, time_bnds_id, tavg(1:2), (/1, itime/))
             if (istat /= NF90_NOERR) call error_handler &
               ('reading time bnds', ncode=istat)
             tavg(3) = tavg(2) - tavg(1)
         else
-            tavg = 1
+            tavg(3) = 1.
         endif
 
         if (do_climo_avg .and. itime == numtime) then
